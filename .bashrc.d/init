@@ -1,0 +1,61 @@
+#!/bin/bash
+
+ROOT_DIR="${HOME}/.bashrc.d"
+HOST_DIR="${ROOT_DIR}/hosts/${HOSTNAME}"
+
+if [[ ! -d ${HOST_DIR} ]]; then
+  echo "${HOST_DIR} doesn't exist - creating..."
+  mkdir -pv ${HOST_DIR}
+fi
+
+# Load all bashrc.d parts
+if [[ -d ~/.bashrc.d/env/all ]]; then
+  for BASHRC_FILE in $(ls ~/.bashrc.d/env/all/*.bashrc 2>/dev/null); do
+    . ${BASHRC_FILE}
+  done
+fi
+
+# Load environment-specific bashrc.d parts
+if [[ ! -z ${BASH_ENV} ]] && [[ -d ~/.bashrc.d/env/${BASH_ENV} ]]; then
+  for BASHRC_FILE in $(ls ~/.bashrc.d/env/${BASH_ENV}/*.bashrc 2>/dev/null); do
+    . ${BASHRC_FILE}
+  done
+fi
+
+# Load host-specific bashrc.d parts
+if [[ -d ${HOST_DIR} ]]; then
+  for BASHRC_FILE in $(ls ${HOST_DIR}*.bashrc 2>/dev/null); do
+    . ${BASHRC_FILE}
+  done
+fi
+
+export PATH="${PATH}:${HOME}/.bin"
+
+dotf() {
+  CMD=$1
+  case ${CMD} in
+    pull)
+      echo "Updating dotfiles..."
+      CURPWD=${PWD}
+      cd ~ && git pull
+      echo "Switching back to ${CURPWD}..."
+      cd ${CURPWD}
+      ;;
+    push)
+      echo "Pushing new dotfiles..."
+      CURPWD=${PWD}
+      cd ~ && git push
+      echo "Switching back to ${CURPWD}..."
+      cd ${CURPWD}
+      ;;
+    commit|c)
+      echo "Committing changes..."
+      CURPWD=${PWD}
+      cd ~ && git add . && git c "General add/commit on ${HOSTNAME}"
+      echo "Switching back to ${CURPWD}..."
+      cd ${CURPWD}
+      ;;
+    *)
+      ;;
+  esac
+}

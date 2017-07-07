@@ -1,0 +1,1 @@
+../../sections/prompt.bashrc

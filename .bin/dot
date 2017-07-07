@@ -1,0 +1,149 @@
+#!/bin/bash
+
+DOT_ROOT="${HOME}/.dot"
+BASHRC_ROOT="${DOT_ROOT}/bashrc.d"
+CONFIG_ROOT="${DOT_ROOT}/config"
+HOST_DIR="${CONFIG_ROOT}/hosts/${HOSTNAME}"
+
+# split out args
+IFS=', ' read -r -a ARGS <<< "$*"
+
+initialise() {
+  # Create a host directory if it doesn't already exist
+  if [[ ! -d ${HOST_DIR} ]]; then
+    mkdir ${HOST_DIR}
+  fi
+
+  if [[ ! -d ${HOST_DIR}/bashrc.d ]]; then
+    mkdir ${HOST_DIR}/bashrc.d
+    mkdir ${HOST_DIR}/bashrc.d/sections
+    mkdir ${HOST_DIR}/bashrc.d/groups
+  fi
+
+  echo "Initialisation complete"
+
+}
+
+bashrc() {
+  SUB_CMD=$1
+
+  case ${SUB_CMD} in
+    "ls")
+      # List sections
+      LS_OPT=$2
+
+      case ${LS_OPT} in
+        "all")
+          for SECTION in $(ls ${BASHRC_ROOT}/sections); do
+            echo ${SECTION} | cut -f1 -d"."
+          done
+          ;;
+        "host")
+          if [[ -d ${BASHRC_ROOT}/hosts/${HOSTNAME} ]]; then
+            for SECTION in $(ls ${BASHRC_ROOT}/hosts/${HOSTNAME}); do
+              echo ${SECTION} | cut -f1 -d"."
+            done
+          else
+            echo "No host configuration found for ${HOSTNAME}"
+          fi
+          ;;
+        "group")
+          GROUP=$3
+          if [[ -z ${GROUP} ]]; then
+            echo "Missing group name"
+            exit
+          fi
+          if [[ -d ${BASHRC_ROOT}/groups/${GROUP} ]]; then
+            for SECTION in $(ls ${BASHRC_ROOT}/groups/${GROUP}); do
+              echo ${SECTION} | cut -f1 -d"."
+            done
+          else
+            echo "No group configuration found for ${GROUP}"
+          fi
+          ;;
+
+        *)
+          ;;
+      esac
+      ;;
+    "group")
+      GROUP_CMD=$2
+
+      case ${GROUP_CMD} in
+        "create")
+          # Create a group
+          GROUP_NAME=$3
+
+          # Exit if we don't have a group name
+          if [[ -z ${GROUP_NAME} ]]; then
+            echo "Missing group name"
+            exit
+          fi
+
+          # Check to see if the group exists already
+          if [[ -d ${BASHRC_ROOT}/groups/${GROUP_NAME} ]]; then
+            echo "Group ${GROUP_NAME} already exists"
+            exit
+          fi
+
+          mkdir ${BASHRC_ROOT}/groups/${GROUP_NAME}
+          echo "Group ${GROUP_NAME} created"
+          ;;
+
+        "delete")
+          # Delete a group
+          GROUP_NAME=$3
+
+          # Exit if we don't have a group name
+          if [[ -z ${GROUP_NAME} ]]; then
+            echo "Missing group name"
+            exit
+          fi
+
+          # Check to see if the group exists
+          if [[ ! -d ${BASHRC_ROOT}/groups/${GROUP_NAME} ]]; then
+            echo "Group ${GROUP_NAME} does not exist"
+            exit
+          fi
+
+          # Check if we really want to delete this group
+          echo -n "Really delete group ${GROUP_NAME}? "
+          read yn
+
+          # If the user answered 'y', then delete it
+          if [[ $yn == "y" ]]; then
+            rm -rf ${BASHRC_ROOT}/groups/${GROUP_NAME}
+            echo "Group ${GROUP_NAME} deleted"
+          fi
+          ;;
+
+        "ls")
+          # List groups
+          for GROUP in $(ls ${BASHRC_ROOT}/groups ); do
+            echo ${GROUP}
+          done
+          ;;
+
+        "show")
+          ;;
+      esac
+      ;;
+    *)
+      ;;
+  esac
+
+}
+
+CMD=${ARGS[0]}
+CMD_ARGS=${ARGS[@]:1}
+
+case ${CMD} in
+  "bashrc")
+    bashrc ${CMD_ARGS}
+    ;;
+  "init")
+    initialise
+    ;;
+  *)
+    ;;
+esac

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+alias kc="knife cookbook"
+alias kcl="knife cookbook list"
+alias kcu="knife cookbook upload"
+alias ks="knife status"
+alias kns="knife node show"
+alias kne="knife node edit"
+alias knl="knife node list"
+alias knd="knife node delete"
+alias krs="knife role show"
+alias kre="knife role edit"
+alias krl="knife role list"
+alias krd="knife node delete"
+alias kcll="knife client list"
+alias kcls="knife client show"
+alias kcle="knife client edit"
+alias kcld="knife client delete"
