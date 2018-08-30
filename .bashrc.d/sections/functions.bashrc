@@ -44,3 +44,45 @@ function ssh-key-auth() {
     fi
   fi
 }
+
+function agent() {
+  log_info "Starting SSH agent..."
+  ssh-agent >~/.agent
+  source ~/.agent >/dev/null
+  log_info "SSH agent started with PID ${F_GREEN}${SSH_AGENT_PID}${CLR}"
+}
+
+function b() {
+  CMD=$1
+  MSG="$2"
+
+  if [[ ${CMD} = "sec" ]]; then
+    cd ~/.bashrc.d/sections
+    ls
+  elif [[ ${CMD} = "diff" ]]; then
+    git --work-tree ${HOME} --git-dir ${HOME}/.git diff
+  elif [[ ${CMD} = "pull" ]]; then
+    git --work-tree ${HOME} --git-dir ${HOME}/.git pull
+  elif [[ ${CMD} = "push" ]]; then
+    git --work-tree ${HOME} --git-dir ${HOME}/.git push
+  elif [[ ${CMD} = "j" ]]; then
+    git --work-tree ${HOME} --git-dir ${HOME}/.git add ~/.journal ~/.jrnl_config
+    git --work-tree ${HOME} --git-dir ${HOME}/.git commit -m "Commited journal entries"
+    git --work-tree ${HOME} --git-dir ${HOME}/.git push
+  elif [[ ${CMD} = "b" ]]; then
+    if [[ -z ${MSG} ]]; then
+      echo "No message given."
+      return 1
+    fi
+    git --work-tree ${HOME} --git-dir ${HOME}/.git add ~/.bashrc.d/sections
+    git --work-tree ${HOME} --git-dir ${HOME}/.git commit -m "${MSG}"
+    git --work-tree ${HOME} --git-dir ${HOME}/.git push
+  else
+    echo -e "\n${F_PURPLE}dotfile${CLR} status"
+    echo "--------------------------------------------------"
+    git --work-tree ${HOME} --git-dir ${HOME}/.git status
+    echo "--------------------------------------------------"
+    git --work-tree ${HOME} --git-dir ${HOME}/.git log -1
+    echo -e ""
+  fi
+}

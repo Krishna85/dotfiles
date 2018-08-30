@@ -63,13 +63,21 @@ ssl() {
       FILE=$2
       openssl x509 -in ${FILE} -noout -text | egrep "Not (Before|After)"
       ;;
-    gencsr)
+    genkeycsr)
       CN=$2
       if [[ -z ${CN} ]]; then
         echo "No common name given."
         return 1
       fi
       openssl req -new -newkey rsa:2048 -nodes -days 365 -out ${CN}.csr -keyout ${CN}.key
+      ;;
+    gencsr)
+      CN=$2
+      if [[ -z ${CN} ]]; then
+        echo "No common name given."
+        return 1
+      fi
+      openssl req -new -days 365 -key ${CN}.key -out ${CN}.csr
       ;;
     issuer)
       FILE=$2
