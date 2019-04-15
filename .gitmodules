@@ -1,0 +1,21 @@
+[submodule ".vim/pack/plugins/start/indentLine"]
+	path = .vim/pack/plugins/start/indentLine
+	url = https://github.com/Yggdroot/indentLine
+[submodule ".vim/pack/plugins/start/jedi-vim"]
+	path = .vim/pack/plugins/start/jedi-vim
+	url = https://github.com/davidhalter/jedi-vim
+[submodule ".vim/pack/plugins/start/python-mode"]
+	path = .vim/pack/plugins/start/python-mode
+	url = https://github.com/python-mode/python-mode.git
+[submodule ".vim/pack/plugins/start/vim-airline"]
+	path = .vim/pack/plugins/start/vim-airline
+	url = https://github.com/vim-airline/vim-airline.git
+[submodule ".vim/pack/plugins/start/vim-json"]
+	path = .vim/pack/plugins/start/vim-json
+	url = https://github.com/elzr/vim-json
+[submodule ".vim/pack/plugins/start/vim-sensible"]
+	path = .vim/pack/plugins/start/vim-sensible
+	url = git://github.com/tpope/vim-sensible.git
+[submodule ".dist/htrace.sh"]
+	path = .dist/htrace.sh
+	url = https://github.com/trimstray/htrace.sh
